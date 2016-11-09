@@ -122,18 +122,18 @@ public class P2PTCP {
 
             x = BigInteger.ONE; //BigInteger.ONE.mod(a).divide(e);
 
-            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() < (int)Math.sqrt(keyLength))) {
+            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int)Math.sqrt(keyLength))) {
                 x = x.add(BigInteger.ONE);
                 
-                System.out.println("x: " + x);
+                System.out.println("x: " + x); 
             }
 
             d = (a.multiply(x).add(BigInteger.ONE)).divide(e); 
-        } while (x.bitLength() > Math.sqrt(keyLength));
+        } while (x.bitLength() >= Math.sqrt(keyLength));
 
         System.out.println("a: " + a);
         System.out.println("d: " + d);
-
+ 
         return new BigInteger[][]{{e, N}, {d, N}};
     }
 
