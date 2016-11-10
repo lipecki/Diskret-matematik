@@ -10,7 +10,7 @@ public class P2PTCP {
 
     private static String yes;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Scanner scan, keyboard;
         Thread st = null;
@@ -23,7 +23,7 @@ public class P2PTCP {
         String fromSocket, in = null;
 
         if (args[0].equals("server")) {
-            e = N = null;
+            e = N = krypto = null;
 
             try {
                 serverKeys = Cryptographer.generateKeys(Integer.valueOf(args[2]), rnd);
@@ -47,20 +47,21 @@ public class P2PTCP {
                         e = new BigInteger(keyStrings[0]);
                         N = new BigInteger(keyStrings[1]);
 
-                        st = new Thread(new CipherSender(pw, e, N));
+                        st = new Thread(new CipherSender(pw, Cryptographer.decrypt(krypto, serverKeys[1][0], serverKeys[1][1]).toString(),e, N));
                         st.start();
+                        st.join();
                         
-                        System.out.println("Hey!");
+                        System.err.println("Hey!");System.err.flush();
 
                     } //secret received => Decrypt and display
                     else if ((krypto = new BigInteger(keyStrings[0])) instanceof BigInteger) {
 
                         //Print to screen
                         System.err.println("Decrypt BigInteger: " + krypto);
-                        System.err.println("Secret: " + Cryptographer.decrypt(krypto, serverKeys[1][0], serverKeys[1][1]));
+                        System.err.println("Decrypted client secret: " + Cryptographer.decrypt(krypto, serverKeys[1][0], serverKeys[1][1]));
                         System.err.flush();
                     } else {
-                        System.err.println("The End!");
+                        System.err.println("The End!"); System.err.flush();
                     }
                 }
             } catch (IOException io) {
@@ -70,6 +71,7 @@ public class P2PTCP {
             }
         } else if (args[0].equals("client")) {
             e = N = null;
+            String secret=null;
 
             try {
                 clientKeys = Cryptographer.generateKeys(Integer.valueOf(args[2]), rnd);
@@ -88,25 +90,31 @@ public class P2PTCP {
                         
                         
                         do{
-                            st = new Thread(new CipherSender(out, e, N));
+                            secret = String.valueOf(rnd.nextInt(100) +1);
+                            st = new Thread(new CipherSender(out, secret, e, N));
                             st.start();
                             st.join();
-                            System.out.println("would you like to send another cipher?");
+                            
+                            System.err.println("would you like to send another cipher?");
                             yes = keyboard.nextLine();
                             yes = yes.toLowerCase();
                             
                         } while ('y' == yes.charAt(0));
                         
+                        //send public client key
+                        out = new PrintWriter(peerConnectionSocket.getOutputStream());
                         out.println(clientKeys[0][0] + ";" + clientKeys[0][1]);
+                        out.flush();
                         
-                        System.out.println("Yo!");
+                        System.err.println("Yo!");
 
                     } //secret received => Decrypt and display
                     else if ((krypto = new BigInteger(keyStrings[0])) instanceof BigInteger) {
 
                         //Print to screen
                         System.err.println("Decrypt BigInteger: " + krypto);
-                        System.err.println("Secret: " + Cryptographer.decrypt(krypto, clientKeys[1][0], clientKeys[1][1]));
+                        System.err.println("Decrypted server secret: " + Cryptographer.decrypt(krypto, clientKeys[1][0], clientKeys[1][1]));
+                        if(Cryptographer.decrypt(krypto, clientKeys[1][0], clientKeys[1][1]).equals(new BigInteger(secret))) System.err.println("We trust you!");
                         System.err.flush();
                     } 
                 }

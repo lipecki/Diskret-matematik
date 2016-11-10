@@ -11,32 +11,25 @@ class CipherSender implements Runnable {
     private String secret;
     boolean cont = true;
 
-    public CipherSender(PrintWriter out, BigInteger e, BigInteger N) {
+    public CipherSender(PrintWriter out,String secret, BigInteger e, BigInteger N) {
+        this.scan = new Scanner(System.in);
         this.out = out;
-        scan = new Scanner(System.in);
+        this.secret = secret;
         this.e = e;
         this.N = N;
     }
 
     public void run() {
-
-        System.out.print("Please enter a number between 0 and 100: ");
-        secret = scan.nextLine();
         encryptedSecret = Cryptographer.encrypt(secret, e, N);
 
         //Print to screen
-        System.err.println("Secret: " + secret);
+        System.err.println("New secret: " + secret);
         System.err.println("Encrypted secret: " + encryptedSecret);
         System.err.flush();
         
         //Send cypher
         out.println(encryptedSecret);
         out.flush();
-
-    }
-
-    public void stop() {
-        cont = false;
     }
 
 }
