@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 public class P2PTCP {
 
+    private static String yes;
+
     public static void main(String[] args) {
 
         Scanner scan, keyboard;
@@ -84,8 +86,16 @@ public class P2PTCP {
                         e = new BigInteger(keyStrings[0]);
                         N = new BigInteger(keyStrings[1]);
                         
-                        st = new Thread(new CipherSender(out, e, N));
-                        st.start();
+                        
+                        do{
+                            st = new Thread(new CipherSender(out, e, N));
+                            st.start();
+                            st.join();
+                            System.out.println("would you like to send another cipher?");
+                            yes = keyboard.nextLine();
+                            yes = yes.toLowerCase();
+                            
+                        } while ('y' == yes.charAt(0));
                         
                         out.println(clientKeys[0][0] + ";" + clientKeys[0][1]);
                         
