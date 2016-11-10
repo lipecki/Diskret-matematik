@@ -23,6 +23,13 @@ class CipherSender implements Runnable {
         System.out.print("Please enter a number between 0 and 100: ");
         secret = scan.nextLine();
         encryptedSecret = Cryptographer.encrypt(secret, e, N);
+
+        //Print to screen
+        System.err.println("Secret: " + secret);
+        System.err.println("Encrypted secret: " + encryptedSecret);
+        System.err.flush();
+        
+        //Send cypher
         out.println(encryptedSecret);
         out.flush();
 

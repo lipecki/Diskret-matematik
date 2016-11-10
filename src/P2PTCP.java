@@ -45,20 +45,10 @@ public class P2PTCP {
                         e = new BigInteger(keyStrings[0]);
                         N = new BigInteger(keyStrings[1]);
 
-                        int secret = rnd.nextInt(100) + 1;
-
-                        BigInteger secretEncrypted = Cryptographer.encrypt(Integer.toString(secret), e, N);
-
-                        //Print to screen
-                        System.err.println("Secret: " + secret);
-                        System.err.println("Encrypted secret: " + secretEncrypted);
-                        System.err.flush();
-
-                        //Write to socket
-                        pw.println(secretEncrypted);
-                        pw.flush();
-
-                        fromSocket = null;
+                        st = new Thread(new CipherSender(pw, e, N));
+                        st.start();
+                        
+                        System.out.println("Hey!");
 
                     } //secret received => Decrypt and display
                     else if ((krypto = new BigInteger(keyStrings[0])) instanceof BigInteger) {
@@ -85,7 +75,6 @@ public class P2PTCP {
                 PrintWriter out = new PrintWriter(peerConnectionSocket.getOutputStream());
                 
                 scan = new Scanner(peerConnectionSocket.getInputStream());
-                System.out.println("Client thinks it's connected");
 
                 while ((fromSocket = scan.nextLine()) != null){
                     String[] keyStrings = fromSocket.split(";");
@@ -97,6 +86,10 @@ public class P2PTCP {
                         
                         st = new Thread(new CipherSender(out, e, N));
                         st.start();
+                        
+                        out.println(clientKeys[0][0] + ";" + clientKeys[0][1]);
+                        
+                        System.out.println("Yo!");
 
                     } //secret received => Decrypt and display
                     else if ((krypto = new BigInteger(keyStrings[0])) instanceof BigInteger) {
