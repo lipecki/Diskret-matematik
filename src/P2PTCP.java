@@ -88,7 +88,8 @@ public class P2PTCP {
                         
                         
                         do{
-                            secret = String.valueOf(rnd.nextInt(100) +1);
+                            System.err.println("please enter number: ");
+                            secret = String.valueOf(keyboard.nextLine());
                             st = new Thread(new CipherSender(out, secret, e, N));
                             st.start();
                             st.join();
