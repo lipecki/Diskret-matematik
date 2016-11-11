@@ -26,7 +26,7 @@ public class P2PTCP {
             e = N = krypto = null;
 
             try {
-                serverKeys = Cryptographer.generateKeys(Integer.valueOf(args[2]), rnd);
+                serverKeys = Cryptographer.generateKeys(args[2], rnd);
                 ServerSocket ss = new ServerSocket(Integer.parseInt(args[1]));
 
                 System.out.println("Waiting for connection...");
@@ -72,7 +72,7 @@ public class P2PTCP {
             String secret=null;
 
             try {
-                clientKeys = Cryptographer.generateKeys(Integer.valueOf(args[2]), rnd);
+                clientKeys = Cryptographer.generateKeys(args[2], rnd);
                 peerConnectionSocket = new Socket("localhost", Integer.parseInt(args[1]));
                 PrintWriter out = new PrintWriter(peerConnectionSocket.getOutputStream());
                 
@@ -89,7 +89,7 @@ public class P2PTCP {
                         
                         do{
                             System.err.println("please enter number: ");
-                            secret = String.valueOf(keyboard.nextLine());
+                            secret = keyboard.nextLine();
                             st = new Thread(new CipherSender(out, secret, e, N));
                             st.start();
                             st.join();

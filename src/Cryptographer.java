@@ -34,13 +34,12 @@ class Cryptographer {
         return bigSecret.modPow(d, N);
     }
 
-    public static BigInteger[][] generateKeys(int keyLength, Random rnd) {
+    public static BigInteger[][] generateKeys(String keyLength, Random rnd) {
         BigInteger a, d, e, N, p, q, x;
         do {
             do {
-
-                p = BigInteger.probablePrime(keyLength / 2, rnd).abs();
-                q = BigInteger.probablePrime(keyLength / 2, rnd).abs();
+                p = BigInteger.probablePrime(Integer.valueOf(keyLength).intValue() / 2, rnd).abs();
+                q = BigInteger.probablePrime(Integer.valueOf(keyLength).intValue() / 2, rnd).abs();
             } while (p.equals(BigInteger.ONE) || q.equals(BigInteger.ONE) || p.equals(q)); // a får inte bli 0
 
             System.out.println("p & q: " + p + " & " + q);
@@ -66,7 +65,7 @@ class Cryptographer {
             }
 
             e = BigInteger.valueOf((long) Math.pow(Math.E, dbl));
-
+            
             System.out.println("e: " + e);
 
             while (!a.gcd(e).equals(ett)) {
@@ -76,14 +75,14 @@ class Cryptographer {
 
             x = BigInteger.ONE;
 
-            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int) Math.sqrt(keyLength))) {
+            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int) Math.sqrt(new Integer(keyLength).intValue()))) {
                 x = x.add(BigInteger.ONE);
 
                 System.out.println("x: " + x);
             }
 
             d = (a.multiply(x).add(BigInteger.ONE)).divide(e);
-        } while (x.bitLength() >= Math.sqrt(keyLength));
+        } while (x.bitLength() >= (int) Math.sqrt(new Integer(keyLength).intValue()));
 
         System.out.println("a: " + a);
         System.out.println("d: " + d);
@@ -111,7 +110,7 @@ I vårt exempel gäller att ( p - 1)(q - 1) = 4 , som sagt,
 och vi behöver bara finna ett tal x som har egenskapen att 
 ( x( p - 1)(q - 1) + 1) / e  = (4x + 1) / 7 blir ett heltal.
 
-Detta heltal duger sedan som x. 
+Ddetta heltal duger sedan som x. 
 I exemplet ser vi att x = 3 
 och vad det svarar mot för x kan vi se 
 genom att lösa ut x ur (4x + 1) / 7 = 3 ⇔  4x + 1 = 21 ⇔  x = 5 . 
