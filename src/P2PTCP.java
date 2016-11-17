@@ -47,7 +47,7 @@ public class P2PTCP {
                         e = new BigInteger(keyStrings[0]);
                         N = new BigInteger(keyStrings[1]);
 
-                        st = new Thread(new CipherSender(pw, Cryptographer.decrypt(krypto, serverKeys[1][0], serverKeys[1][1]).toString(),e, N));
+                        st = new Thread(new CipherSender(pw, Cryptographer.decrypt(krypto, serverKeys[1][0], serverKeys[1][1]).toString(),e, N, args[2]));
                         st.start();
                         st.join();
 
@@ -90,7 +90,7 @@ public class P2PTCP {
                         do{
                             System.err.println("please enter number: ");
                             secret = keyboard.nextLine();
-                            st = new Thread(new CipherSender(out, secret, e, N));
+                            st = new Thread(new CipherSender(out, secret, e, N, args[2]));
                             st.start();
                             st.join();
                             

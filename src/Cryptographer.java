@@ -38,8 +38,8 @@ class Cryptographer {
         BigInteger a, d, e, N, p, q, x;
         do {
             do {
-                p = BigInteger.probablePrime(Integer.valueOf(keyLength).intValue() / 2, rnd).abs();
-                q = BigInteger.probablePrime(Integer.valueOf(keyLength).intValue() / 2, rnd).abs();
+                p = BigInteger.probablePrime(Integer.valueOf(keyLength) / 2, rnd).abs();
+                q = BigInteger.probablePrime(Integer.valueOf(keyLength) / 2, rnd).abs();
             } while (p.equals(BigInteger.ONE) || q.equals(BigInteger.ONE) || p.equals(q)); // a får inte bli 0
 
             System.out.println("p & q: " + p + " & " + q);
@@ -56,15 +56,10 @@ class Cryptographer {
 
             a = pMinEtt.multiply(qMinEtt);
 
-            double dbl = rnd.nextDouble() * 10;
-            while (dbl <= 1.0) {
-                dbl = rnd.nextDouble() * 10;
-                if (dbl < 0) {
-                    dbl = -(dbl);
-                }
-            }
+            int exp = rnd.nextInt(10) + 1;
+            
 
-            e = BigInteger.valueOf((long) Math.pow(Math.E, dbl));
+            e = BigInteger.valueOf((long) Math.pow(Math.E, exp));
             
             System.out.println("e: " + e);
 
@@ -75,14 +70,14 @@ class Cryptographer {
 
             x = BigInteger.ONE;
 
-            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int) Math.sqrt(new Integer(keyLength).intValue()))) {
-                x = x.add(BigInteger.ONE);
+            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int) Math.sqrt(new Integer(keyLength)))) {
+                x = x.add(BigInteger.ONE).add(BigInteger.ONE);
 
                 System.out.println("x: " + x);
             }
 
             d = (a.multiply(x).add(BigInteger.ONE)).divide(e);
-        } while (x.bitLength() >= (int) Math.sqrt(new Integer(keyLength).intValue()));
+        } while (x.bitLength() >= (int) Math.sqrt(new Integer(keyLength)));
 
         System.out.println("a: " + a);
         System.out.println("d: " + d);
