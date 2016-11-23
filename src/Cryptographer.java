@@ -37,14 +37,15 @@ class Cryptographer {
     public static BigInteger[][] generateKeys(String keyLength, Random rnd) {
         BigInteger a, d, e, N, p, q, x;
         do {
+            System.out.println("Calculating p and q...");
             do {
-                p = BigInteger.probablePrime(Integer.valueOf(keyLength).intValue() / 2, rnd).abs();
-                q = BigInteger.probablePrime(Integer.valueOf(keyLength).intValue() / 2, rnd).abs();
+                p = BigInteger.probablePrime(Integer.valueOf(keyLength) / 2, rnd).abs();
+                q = BigInteger.probablePrime(Integer.valueOf(keyLength) / 2, rnd).abs();
             } while (p.equals(BigInteger.ONE) || q.equals(BigInteger.ONE) || p.equals(q)); // a får inte bli 0
 
             System.out.println("p & q: " + p + " & " + q);
 
-            //Längden av N blir inte längre än keyLenght eftersom 2 bitar x 2 bitar inte blir längre än 4 bitar, osv.
+            //Längden av N blir inte längre än keyLength eftersom 2 bitar x 2 bitar inte blir längre än 4 bitar, osv.
             N = p.multiply(q);
 
             System.out.println("N length: " + N.bitLength());
@@ -56,33 +57,27 @@ class Cryptographer {
 
             a = pMinEtt.multiply(qMinEtt);
 
-            double dbl = rnd.nextDouble() * 10;
-            while (dbl <= 1.0) {
-                dbl = rnd.nextDouble() * 10;
-                if (dbl < 0) {
-                    dbl = -(dbl);
-                }
+            e = BigInteger.ONE.add(BigInteger.ONE);
+            
+            
+            // Räkna ut e, sådan att e och (p-1)(q-1) är relativt prima
+            System.out.println("Calculating e...");
+            while (!a.gcd(e).equals(ett)) {
+                e = e.nextProbablePrime();
             }
-
-            e = BigInteger.valueOf((long) Math.pow(Math.E, dbl));
             
             System.out.println("e: " + e);
-
-            while (!a.gcd(e).equals(ett)) {
-                e = e.add(BigInteger.valueOf(rnd.nextLong())).abs();
-                System.out.println("e: " + e);
-            }
-
             x = BigInteger.ONE;
-
-            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int) Math.sqrt(new Integer(keyLength).intValue()))) {
-                x = x.add(BigInteger.ONE);
-
-                System.out.println("x: " + x);
+            
+            System.out.println("Calculating x...");
+            while (!(a.multiply(x).add(BigInteger.ONE)).remainder(e).equals(BigInteger.ZERO) && (x.bitLength() <= (int) Math.sqrt(Integer.parseInt(keyLength)))) {
+                x = x.add(BigInteger.ONE);    
             }
-
+            System.out.println("x: " + x);
+            
+            
             d = (a.multiply(x).add(BigInteger.ONE)).divide(e);
-        } while (x.bitLength() >= (int) Math.sqrt(new Integer(keyLength).intValue()));
+        } while (x.bitLength() >= (int) Math.sqrt(Integer.parseInt(keyLength)));
 
         System.out.println("a: " + a);
         System.out.println("d: " + d);
