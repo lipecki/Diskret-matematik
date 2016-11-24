@@ -10,7 +10,7 @@ public class P2PTCP {
 
     private static String yes;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         Scanner scan, keyboard;
         Thread st = null;
@@ -66,6 +66,7 @@ public class P2PTCP {
                 io.printStackTrace();
             } finally {
                 st.stop();
+                peerConnectionSocket.close();
             }
         } else if (args[0].equals("client")) {
             e = N = null;
@@ -104,6 +105,7 @@ public class P2PTCP {
                         out = new PrintWriter(peerConnectionSocket.getOutputStream());
                         out.println(clientKeys[0][0] + ";" + clientKeys[0][1]);
                         out.flush();
+                       
 
                     } //secret received => Decrypt and display
                     else if ((krypto = new BigInteger(keyStrings[0])) instanceof BigInteger) {
@@ -113,6 +115,7 @@ public class P2PTCP {
                         System.err.println("Decrypted server secret: " + Cryptographer.decrypt(krypto, clientKeys[1][0], clientKeys[1][1]));
                         if(Cryptographer.decrypt(krypto, clientKeys[1][0], clientKeys[1][1]).equals(new BigInteger(secret))) {
                             System.err.println("We trust you!");
+                            System.err.flush();
                             break;
                         }
                         System.err.flush();
@@ -122,6 +125,7 @@ public class P2PTCP {
                 io.printStackTrace();
             } finally {
                 st.stop();
+                peerConnectionSocket.close();
             }
         }
     }
