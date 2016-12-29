@@ -1,7 +1,7 @@
 
 
 function nodeList = getPossibleEdges (edgeMatrix,weightedAdjM)
-  edgeMatrix
+  #edgeMatrix
   nodeList = edgeMatrix(1,1:2);
   i = 1;
   l = rows(edgeMatrix);
